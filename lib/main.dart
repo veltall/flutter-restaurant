@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: new FloatingActionButton(
         child: new Icon(Icons.favorite, color: Colors.white),
-        // onPressed: _navigateToFav(context),
+        elevation: 9.0,
         onPressed: () {
           Navigator.push(
             context,
