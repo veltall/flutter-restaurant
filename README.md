@@ -1,8 +1,7 @@
 # polymerdemo
 
-A new Flutter project.
+A simple Flutter.io app that scans nearby restaurants (using GoogleMaps Places API) and allows for creation of a **persistent** favorite list.
 
-## Getting Started
+## Screenies
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+![a video is worth a thousand pictures](https://files.catbox.moe/emAzcq.gif)
