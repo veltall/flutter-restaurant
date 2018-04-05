@@ -4,4 +4,4 @@ A simple Flutter.io app that scans nearby restaurants (using GoogleMaps Places A
 
 ## Screenies
 
-![a video is worth a thousand pictures](https://files.catbox.moe/emAzcq.gif)
+<img src="https://files.catbox.moe/emAzcq.gif" width="300" />
