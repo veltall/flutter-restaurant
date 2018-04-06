@@ -117,7 +117,6 @@ class _PlaceWidgetState extends State<PlaceWidget> {
     // checks favorite state
     final favInheritedWidget = FavInheritedWidget.of(context);
     Map<Place, RestaurantType> _favList = favInheritedWidget._favList;
-    RestaurantType restaurantType;
     RestaurantType saveTo;
 
     return new ListTile(
@@ -126,8 +125,8 @@ class _PlaceWidgetState extends State<PlaceWidget> {
           new Text(_place.address, style: Theme.of(context).textTheme.caption),
       leading: new CircleAvatar(
         child: new Text(_place.rating.toString()),
-        backgroundColor: (restaurantType != null)
-            ? Colors.green
+        backgroundColor: (_favList[_place] != null)
+            ? Theme.of(context).highlightColor
             : Theme.of(context).primaryColor,
       ),
       onTap: () async {
@@ -181,8 +180,7 @@ class _PlaceWidgetState extends State<PlaceWidget> {
         }
 
         setState(() {
-          restaurantType = saveTo;
-          _favList[_place] = restaurantType;
+          _favList[_place] = saveTo;
         });
 
         final snackBar = new SnackBar(
