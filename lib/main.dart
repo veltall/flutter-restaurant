@@ -155,7 +155,14 @@ class _PlaceWidgetState extends State<PlaceWidget> {
                       onPressed: () {
                         Navigator.pop(context, RestaurantType.MISC);
                       },
-                      child: const Text('Miscellaneous'))
+                      child: const Text('Miscellaneous')),
+                      new Divider(color: Colors.black),
+                      new SimpleDialogOption(
+                        onPressed: () {
+                          Navigator.pop(context, null);
+                        },
+                        child: const Text('Remove from lists'),
+                      )
                 ]))) {
           case RestaurantType.CHEAP:
             saveTo = RestaurantType.CHEAP;
