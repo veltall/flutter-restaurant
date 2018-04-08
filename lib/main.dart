@@ -5,6 +5,11 @@ import './places.dart';
 const lat = 47.706406;
 const long = -122.207548;
 
+const String _kAsset0 = 'shrine/vendors/zach.jpg';
+const String _kAsset1 = 'shrine/vendors/16c477b.jpg';
+const String _kAsset2 = 'shrine/vendors/sandra-adams.jpg';
+const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
+
 void main() => runApp(new MyApp());
 
 class FavInheritedWidget extends InheritedWidget {
@@ -41,17 +46,196 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({Key key, this.title}) : super(key: key);
+class HomeScreen extends StatefulWidget {
   final String title;
+
+  HomeScreen({this.title});
+
+  @override
+  _HomeScreenState createState() => new _HomeScreenState(title: title);
+}
+
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  final String title;
+  static const List<String> _drawerContents = const <String>[
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+  ];
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
+
+  AnimationController _controller;
+  Animation<double> _drawerContentsOpacity;
+  Animation<Offset> _drawerDetailsPosition;
+  bool _showDrawerContents = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = new AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 250),
+    );
+    _drawerContentsOpacity = new CurvedAnimation(
+      parent: new ReverseAnimation(_controller),
+      curve: Curves.fastOutSlowIn,
+    );
+    _drawerDetailsPosition = new Tween<Offset>(
+      begin: const Offset(0.0, -1.0),
+      end: Offset.zero,
+    ).animate(new CurvedAnimation(
+      parent: _controller,
+      curve: Curves.fastOutSlowIn,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  _HomeScreenState({Key key, this.title});
+
+  // refresh app
+  Future<Null> _handleRefresh() {
+    final Completer<Null> completer = new Completer<Null>();
+    new Timer(const Duration(seconds: 3), () {
+      completer.complete(null);
+    });
+
+    return completer.future.then((_) {
+      // _scaffoldKey.currentState?.showSnackBar(new SnackBar(    // optional snackbar report
+      //     content: const Text('Refresh complete'),
+      //     action: new SnackBarAction(
+      //         label: 'RETRY',
+      //         onPressed: () {
+      //           _refreshIndicatorKey.currentState.show();
+      //         })));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(title),
-      ),
-      body: new MainList(),
+      key: _scaffoldKey,
+      appBar: new AppBar(title: new Text(title)),
+      drawer: new Drawer(
+          child: new Column(
+        children: <Widget>[
+          new UserAccountsDrawerHeader(
+            accountName: const Text('Zach Widget'),
+            accountEmail: const Text('zach.widget@example.com'),
+            currentAccountPicture: const CircleAvatar(
+              backgroundImage: const AssetImage(
+                _kAsset0,
+                package: _kGalleryAssetsPackage,
+              ),
+            ),
+            otherAccountsPictures: <Widget>[
+              new GestureDetector(
+                onTap: () {
+                  _onOtherAccountsTap(context);
+                },
+                child: new Semantics(
+                  label: 'Switch to Account B',
+                  child: const CircleAvatar(
+                    backgroundImage: const AssetImage(
+                      _kAsset1,
+                      package: _kGalleryAssetsPackage,
+                    ),
+                  ),
+                ),
+              ),
+              new GestureDetector(
+                onTap: () {
+                  _onOtherAccountsTap(context);
+                },
+                child: new Semantics(
+                  label: 'Switch to Account C',
+                  child: const CircleAvatar(
+                    backgroundImage: const AssetImage(
+                      _kAsset2,
+                      package: _kGalleryAssetsPackage,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+            margin: EdgeInsets.zero,
+            onDetailsPressed: () {
+              _showDrawerContents = !_showDrawerContents;
+              if (_showDrawerContents)
+                _controller.reverse();
+              else
+                _controller.forward();
+            },
+          ),
+          new MediaQuery.removePadding(
+            context: context,
+            // DrawerHeader consumes top MediaQuery padding.
+            removeTop: true,
+            child: new Expanded(
+              child: new ListView(
+                padding: const EdgeInsets.only(top: 8.0),
+                children: <Widget>[
+                  new Stack(
+                    children: <Widget>[
+                      // The initial contents of the drawer.
+                      new FadeTransition(
+                        opacity: _drawerContentsOpacity,
+                        child: new Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: _drawerContents.map((String id) {
+                            return new ListTile(
+                              leading: new CircleAvatar(child: new Text(id)),
+                              title: new Text('Drawer item $id'),
+                              onTap: null,
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      // The drawer's "details" view.
+                      new SlideTransition(
+                        position: _drawerDetailsPosition,
+                        child: new FadeTransition(
+                          opacity: new ReverseAnimation(_drawerContentsOpacity),
+                          child: new Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              new ListTile(
+                                leading: const Icon(Icons.add),
+                                title: const Text('Add account'),
+                                onTap: null,
+                              ),
+                              new ListTile(
+                                leading: const Icon(Icons.settings),
+                                title: const Text('Manage accounts'),
+                                onTap: null,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      )),
+      body: new RefreshIndicator(
+          key: _refreshIndicatorKey,
+          onRefresh: _handleRefresh,
+          child: new MainList()),
       floatingActionButton: new FloatingActionButton(
         child: new Icon(Icons.list, color: Colors.white),
         elevation: 9.0,
@@ -62,7 +246,23 @@ class HomeScreen extends StatelessWidget {
             },
           ));
         },
-        // backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  void _onOtherAccountsTap(BuildContext context) {
+    showDialog<Null>(
+      context: context,
+      child: new AlertDialog(
+        title: const Text('Account switching not implemented.'),
+        actions: <Widget>[
+          new FlatButton(
+            child: const Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
       ),
     );
   }
@@ -133,35 +333,45 @@ class _PlaceWidgetState extends State<PlaceWidget> {
         switch (await showDialog<RestaurantType>(
             context: context,
             child: new SimpleDialog(
-                title: const Text('Save to...'),
+                title: new Text('Save to...',
+                    style: Theme.of(context).textTheme.headline),
                 children: <Widget>[
-                  new SimpleDialogOption(
-                      onPressed: () {
+                  new ListTile(
+                      onTap: () {
                         Navigator.pop(context, RestaurantType.CHEAP);
                       },
-                      child: const Text('Cheap Restaurants')),
-                  new SimpleDialogOption(
-                      onPressed: () {
+                      leading:
+                          new Icon(ListScreen.getIcon(RestaurantType.CHEAP)),
+                      title: const Text('Cheap Restaurants')),
+                  new ListTile(
+                      onTap: () {
                         Navigator.pop(context, RestaurantType.FAMILY);
                       },
-                      child: const Text('Family-friendly Restaurants')),
-                  new SimpleDialogOption(
-                      onPressed: () {
+                      leading:
+                          new Icon(ListScreen.getIcon(RestaurantType.FAMILY)),
+                      title: const Text('Family-friendly Restaurants')),
+                  new ListTile(
+                      onTap: () {
                         Navigator.pop(context, RestaurantType.SPECIALTY);
                       },
-                      child: const Text('Specialty Restaurants')),
-                  new SimpleDialogOption(
-                      onPressed: () {
+                      leading: new Icon(
+                          ListScreen.getIcon(RestaurantType.SPECIALTY)),
+                      title: const Text('Specialty Restaurants')),
+                  new ListTile(
+                      onTap: () {
                         Navigator.pop(context, RestaurantType.MISC);
                       },
-                      child: const Text('Miscellaneous')),
-                      new Divider(color: Colors.black),
-                      new SimpleDialogOption(
-                        onPressed: () {
-                          Navigator.pop(context, null);
-                        },
-                        child: const Text('Remove from lists'),
-                      )
+                      leading:
+                          new Icon(ListScreen.getIcon(RestaurantType.MISC)),
+                      title: const Text('Miscellaneous')),
+                  new Divider(color: Colors.black),
+                  new ListTile(
+                    onTap: () {
+                      Navigator.pop(context, null);
+                    },
+                    leading: new Icon(Icons.delete),
+                    title: const Text('Remove from lists'),
+                  )
                 ]))) {
           case RestaurantType.CHEAP:
             saveTo = RestaurantType.CHEAP;
@@ -183,8 +393,8 @@ class _PlaceWidgetState extends State<PlaceWidget> {
           _favList[_place] = saveTo;
         });
 
-        final snackBar = new SnackBar(
-            content: new Text("Tapped on " + _place.name));
+        final snackBar =
+            new SnackBar(content: new Text("Tapped on " + _place.name));
         Scaffold.of(context).showSnackBar(snackBar);
       },
       trailing: (_favList[_place] != null)
@@ -271,7 +481,7 @@ class ListScreen extends StatelessWidget {
         name = "Family-friendly Restaurants";
         break;
       case RestaurantType.SPECIALTY:
-        name = "Speciality Restaurants";
+        name = "Specialty Restaurants";
         break;
       default:
         name = "Favorite Restaurants";
