@@ -407,10 +407,6 @@ class _PlaceWidgetState extends State<PlaceWidget> {
         setState(() {
           _favList[_place] = dialogRes;
         });
-
-        final snackBar =
-            new SnackBar(content: new Text("Tapped on " + _place.name));
-        Scaffold.of(context).showSnackBar(snackBar);
       },
       trailing: (_favList[_place] != null)
           ? new Icon(Icons.favorite, color: Colors.red)
