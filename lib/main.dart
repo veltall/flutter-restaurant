@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import './places.dart';
 
 const lat = 47.706406;
-const long = -122.207548;
+const lng = -122.207548;
 
 const String _kAsset0 = 'shrine/vendors/zach.jpg';
 const String _kAsset1 = 'shrine/vendors/16c477b.jpg';
@@ -285,7 +285,7 @@ class _MainListState extends State<MainList> {
   }
 
   void listenForPlaces() async {
-    var stream = await getPlaces(lat, long);
+    var stream = await getPlaces(lat, lng);
     stream.listen((place) => setState(() => _places.add(place)));
   }
 
@@ -300,7 +300,7 @@ class _MainListState extends State<MainList> {
 class PlaceWidget extends StatefulWidget {
   @override
   _PlaceWidgetState createState() {
-    return new _PlaceWidgetState(place);
+    return new _PlaceWidgetState();
   }
 
   final Place place;
@@ -308,16 +308,15 @@ class PlaceWidget extends StatefulWidget {
 }
 
 class _PlaceWidgetState extends State<PlaceWidget> {
-  final Place _place;
   RestaurantType restaurantType;
-  _PlaceWidgetState(this._place);
 
   @override
   Widget build(BuildContext context) {
     // checks favorite state
     final favInheritedWidget = FavInheritedWidget.of(context);
     Map<Place, RestaurantType> _favList = favInheritedWidget._favList;
-    RestaurantType saveTo;
+    RestaurantType dialogRes;
+    final Place _place = widget.place;
 
     return new ListTile(
       title: new Text(_place.name),
@@ -374,23 +373,23 @@ class _PlaceWidgetState extends State<PlaceWidget> {
                   )
                 ]))) {
           case RestaurantType.CHEAP:
-            saveTo = RestaurantType.CHEAP;
+            dialogRes = RestaurantType.CHEAP;
             break;
           case RestaurantType.FAMILY:
-            saveTo = RestaurantType.FAMILY;
+            dialogRes = RestaurantType.FAMILY;
             break;
           case RestaurantType.SPECIALTY:
-            saveTo = RestaurantType.SPECIALTY;
+            dialogRes = RestaurantType.SPECIALTY;
             break;
           case RestaurantType.MISC:
-            saveTo = RestaurantType.MISC;
+            dialogRes = RestaurantType.MISC;
             break;
           default:
-            saveTo = null;
+            dialogRes = null;
         }
 
         setState(() {
-          _favList[_place] = saveTo;
+          _favList[_place] = dialogRes;
         });
 
         final snackBar =
