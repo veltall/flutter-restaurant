@@ -5,3 +5,4 @@ A simple Flutter.io app that scans nearby restaurants (using GoogleMaps Places A
 ## Screenies
 
 <img src="https://thumbs.gfycat.com/ImpressionableBlueIslandwhistler-size_restricted.gif" width="300" />
+<img src="https://media.giphy.com/media/1xkbrVRrsal5F8EwYW/giphy.gif" width="300" />

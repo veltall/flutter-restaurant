@@ -488,16 +488,16 @@ class ListScreen extends StatelessWidget {
     String name;
     switch (listType) {
       case RestaurantType.CHEAP:
-        name = "Affordable Restaurants";
+        name = "Affordable";
         break;
       case RestaurantType.FAMILY:
-        name = "Family-friendly Restaurants";
+        name = "Family-frienly";
         break;
       case RestaurantType.SPECIALTY:
-        name = "Specialty Restaurants";
+        name = "Specialty";
         break;
       default:
-        name = "Favorite Restaurants";
+        name = "Favorite";
         break;
     }
     return name;
