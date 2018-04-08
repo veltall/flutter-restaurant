@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import './places.dart';
-
-const lat = 47.706406;
-const lng = -122.207548;
+import 'package:location/location.dart';
 
 const String _kAsset0 = 'shrine/vendors/zach.jpg';
 const String _kAsset1 = 'shrine/vendors/16c477b.jpg';
 const String _kAsset2 = 'shrine/vendors/sandra-adams.jpg';
 const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
+var _lat = 47.706406;
+var _lng = -122.207548;
 
 void main() => runApp(new MyApp());
 
@@ -268,6 +268,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 }
 
+// TODO: this is a todo
 class MainList extends StatefulWidget {
   @override
   _MainListState createState() => new _MainListState();
@@ -285,7 +286,22 @@ class _MainListState extends State<MainList> {
   }
 
   void listenForPlaces() async {
-    var stream = await getPlaces(lat, lng);
+    var currentLocation = <String, double>{};
+    var location = new Location();
+
+    try {
+      currentLocation = await location.getLocation;
+    } on Exception catch (e) {
+      currentLocation = null;
+      print('location error: ' + e.toString());
+    }
+
+    if (currentLocation != null) {
+      _lat = currentLocation["latitude"];
+      _lng = currentLocation["longitude"];
+    }
+
+    var stream = await getPlaces(_lat, _lng);
     stream.listen((place) => setState(() => _places.add(place)));
   }
 
