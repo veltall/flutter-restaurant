@@ -195,7 +195,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           children: _drawerContents.map((String id) {
                             return new ListTile(
                               leading: new CircleAvatar(child: new Text(id)),
-                              title: new Text('Drawer item $id'),
+                              title: (id == 'A')
+                                  ? new Text('Nearby Restaurants')
+                                  : new Text('Nearby Establishment Type $id'),
                               onTap: null,
                             );
                           }).toList(),
@@ -357,21 +359,21 @@ class _PlaceWidgetState extends State<PlaceWidget> {
                       },
                       leading:
                           new Icon(ListScreen.getIcon(RestaurantType.CHEAP)),
-                      title: const Text('Cheap Restaurants')),
+                      title: const Text('Affordable')),
                   new ListTile(
                       onTap: () {
                         Navigator.pop(context, RestaurantType.FAMILY);
                       },
                       leading:
                           new Icon(ListScreen.getIcon(RestaurantType.FAMILY)),
-                      title: const Text('Family-friendly Restaurants')),
+                      title: const Text('Family-friendly')),
                   new ListTile(
                       onTap: () {
                         Navigator.pop(context, RestaurantType.SPECIALTY);
                       },
                       leading: new Icon(
                           ListScreen.getIcon(RestaurantType.SPECIALTY)),
-                      title: const Text('Specialty Restaurants')),
+                      title: const Text('Specialty')),
                   new ListTile(
                       onTap: () {
                         Navigator.pop(context, RestaurantType.MISC);
