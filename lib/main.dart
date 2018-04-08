@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import './places.dart';
+import 'package:location/location.dart';
 
-const lat = 47.706406;
-const long = -122.207548;
+var _lat = 47.706406;
+var _lng = -122.207548;
 
 void main() => runApp(new MyApp());
 
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
       new MaterialApp(
         title: title,
         theme: new ThemeData(
-          primarySwatch: Colors.indigo,
+          primarySwatch: Colors.lightBlue,
         ),
         home: new HomeScreen(title: title),
       ),
@@ -68,6 +69,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+// TODO: this is a todo
 class MainList extends StatefulWidget {
   @override
   _MainListState createState() => new _MainListState();
@@ -85,7 +87,22 @@ class _MainListState extends State<MainList> {
   }
 
   void listenForPlaces() async {
-    var stream = await getPlaces(lat, long);
+    var currentLocation = <String, double>{};
+    var location = new Location();
+
+    try {
+      currentLocation = await location.getLocation;
+    } on Exception catch (e) {
+      currentLocation = null;
+      print('location error: ' + e.toString());
+    }
+
+    if(currentLocation != null) {
+      _lat = currentLocation["latitude"];
+      _lng = currentLocation["longitude"];
+    }
+
+    var stream = await getPlaces(_lat, _lng);
     stream.listen((place) => setState(() => _places.add(place)));
   }
 
@@ -133,28 +150,29 @@ class _PlaceWidgetState extends State<PlaceWidget> {
         switch (await showDialog<RestaurantType>(
             context: context,
             child: new SimpleDialog(
-                title: const Text('Save to...'),
+                title: new Text('Save to...', style: Theme.of(context).textTheme.headline),
+                contentPadding: new EdgeInsets.all(25.0),
                 children: <Widget>[
                   new SimpleDialogOption(
                       onPressed: () {
                         Navigator.pop(context, RestaurantType.CHEAP);
                       },
-                      child: const Text('Cheap Restaurants')),
+                      child: new Text('Cheap Restaurants', style: Theme.of(context).textTheme.subhead,)),
                   new SimpleDialogOption(
                       onPressed: () {
                         Navigator.pop(context, RestaurantType.FAMILY);
                       },
-                      child: const Text('Family-friendly Restaurants')),
+                      child: new Text('Family-friendly Restaurants', style: Theme.of(context).textTheme.subhead)),
                   new SimpleDialogOption(
                       onPressed: () {
                         Navigator.pop(context, RestaurantType.SPECIALTY);
                       },
-                      child: const Text('Specialty Restaurants')),
+                      child: new Text('Specialty Restaurants', style: Theme.of(context).textTheme.subhead)),
                   new SimpleDialogOption(
                       onPressed: () {
                         Navigator.pop(context, RestaurantType.MISC);
                       },
-                      child: const Text('Miscellaneous')),
+                      child: new Text('Miscellaneous', style: Theme.of(context).textTheme.subhead)),
                       new Divider(color: Colors.black),
                       new SimpleDialogOption(
                         onPressed: () {
