@@ -10,6 +10,7 @@ const String _kGalleryAssetsPackage = 'flutter_gallery_assets';
 var _lat = 47.706406;
 var _lng = -122.207548;
 
+// TODO: refactor code into multiple files
 void main() => runApp(new MyApp());
 
 class FavInheritedWidget extends InheritedWidget {
@@ -124,7 +125,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return new Scaffold(
       key: _scaffoldKey,
-      appBar: new AppBar(title: new Text(title)),
+      appBar: new AppBar(
+        title: new Text(title),
+      ),
       drawer: new Drawer(
           child: new Column(
         children: <Widget>[
@@ -194,7 +197,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: _drawerContents.map((String id) {
                             return new ListTile(
-                              leading: new CircleAvatar(child: new Text(id)),
+                              leading: new CircleAvatar(
+                                child: new Text(id),
+                              ),
                               title: (id == 'A')
                                   ? new Text('Nearby Restaurants')
                                   : new Text('Nearby Establishment Type $id'),
@@ -459,19 +464,23 @@ class TransitionScreen extends StatelessWidget {
     List<ListTile> list = new List<ListTile>();
 
     for (var rtype in catalogue.keys) {
-      list.add(new ListTile(
-        title: new Text(ListScreen.getTitle(rtype)),
-        subtitle: new Text(
-          catalogue[rtype].toString() + " places",
-          style: Theme.of(context).textTheme.caption,
+      list.add(
+        new ListTile(
+          title: new Text(ListScreen.getTitle(rtype)),
+          subtitle: new Text(
+            catalogue[rtype].toString() + " places",
+            style: Theme.of(context).textTheme.caption,
+          ),
+          leading: new Icon(ListScreen.getIcon(rtype)),
+          onTap: () => Navigator.push(
+                context,
+                new MaterialPageRoute(
+                  builder: (context) =>
+                      new ListScreen(rtype, ListScreen.getTitle(rtype)),
+                ),
+              ),
         ),
-        leading: new Icon(ListScreen.getIcon(rtype)),
-        onTap: () => Navigator.push(
-            context,
-            new MaterialPageRoute(
-                builder: (context) =>
-                    new ListScreen(rtype, ListScreen.getTitle(rtype)))),
-      ));
+      );
     }
     return list;
   }
@@ -516,12 +525,15 @@ class ListScreen extends StatelessWidget {
       }
     }
     return new Scaffold(
-      appBar: new AppBar(actions: <Widget>[
-        new IconButton(
-          icon: new Icon(Icons.edit),
-          onPressed: null,
-        )
-      ], title: new Text(_listTitle)),
+      appBar: new AppBar(
+        actions: <Widget>[
+          new IconButton(
+            icon: new Icon(Icons.edit),
+            onPressed: null,
+          )
+        ],
+        title: new Text(_listTitle),
+      ),
       body: new ListView(
         children: _favPlaces.map((place) => new PlaceWidget(place)).toList(),
       ),
